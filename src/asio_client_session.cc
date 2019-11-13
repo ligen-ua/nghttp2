@@ -87,6 +87,16 @@ session::session(boost::asio::io_service &io_service,
   impl_->start_resolve(host, service);
 }
 
+session::session(boost::asio::io_service &io_service,
+                 boost::asio::ssl::context &tls_ctx, const std::string &host,
+                 const std::string &service,
+                 const boost::posix_time::time_duration &connect_timeout,
+		 init_callback_cb init_callback)
+    : impl_(std::make_shared<session_tls_impl>(io_service, tls_ctx,
+                                               connect_timeout, init_callback)) {
+  impl_->start_resolve(host, service);
+}
+
 session::~session() {}
 
 session::session(session &&other) noexcept : impl_(std::move(other.impl_)) {}

@@ -69,6 +69,8 @@ using request_cb = std::function<void(const request &)>;
 using connect_cb =
     std::function<void(boost::asio::ip::tcp::resolver::iterator)>;
 
+using init_callback_cb = std::function<void(boost::asio::ssl::stream<boost::asio::ip::tcp::socket>&sock)>;
+
 class request_impl;
 
 class request {
@@ -183,6 +185,12 @@ public:
           const std::string &service,
           const boost::posix_time::time_duration &connect_timeout);
 
+  session(boost::asio::io_service &io_service,
+          boost::asio::ssl::context &tls_ctx, const std::string &host,
+          const std::string &service,
+          const boost::posix_time::time_duration &connect_timeout,
+	  init_callback_cb init_callback);
+ 
   ~session();
 
   session(session &&other) noexcept;

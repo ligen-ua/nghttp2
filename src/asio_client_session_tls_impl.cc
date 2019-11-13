@@ -44,6 +44,14 @@ session_tls_impl::session_tls_impl(
   }
 }
 
+session_tls_impl::session_tls_impl(
+    boost::asio::io_service &io_service, boost::asio::ssl::context &tls_ctx,
+    const boost::posix_time::time_duration &connect_timeout,
+    initialization_callback_type init_callback)
+    : session_impl(io_service, connect_timeout), socket_(io_service, tls_ctx) {
+  init_callback(socket_); 
+}
+
 session_tls_impl::~session_tls_impl() {}
 
 void session_tls_impl::start_connect(tcp::resolver::iterator endpoint_it) {

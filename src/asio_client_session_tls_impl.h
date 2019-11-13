@@ -37,13 +37,19 @@ using boost::asio::ip::tcp;
 
 using ssl_socket = boost::asio::ssl::stream<tcp::socket>;
 
+typedef std::function<void(ssl_socket &sock)> initialization_callback_type;
+
 class session_tls_impl : public session_impl {
 public:
   session_tls_impl(boost::asio::io_service &io_service,
                    boost::asio::ssl::context &tls_ctx, const std::string &host,
                    const std::string &service,
                    const boost::posix_time::time_duration &connect_timeout);
-  virtual ~session_tls_impl();
+  session_tls_impl(boost::asio::io_service &io_service, boost::asio::ssl::context &tls_ctx,
+                   const boost::posix_time::time_duration &connect_timeout,
+                   initialization_callback_type init_callback);
+
+   virtual ~session_tls_impl();
 
   virtual void start_connect(tcp::resolver::iterator endpoint_it);
   virtual tcp::socket &socket();
